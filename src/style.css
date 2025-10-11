@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* ==================== Cropper.js 样式覆盖 ==================== */
+
+/* 调整裁剪器容器样式 */
+.cropper-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 裁剪框样式 */
+.cropper-view-box {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: -1px;
+}
+
+/* ==================== 自定义样式 ==================== */
+
+/* 浮动动画 */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+}
+
+.float-animation {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 脉冲阴影动画 */
+@keyframes pulse-shadow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+  }
+}
+
+.pulse-shadow {
+  animation: pulse-shadow 2s infinite;
+}
+
+/* 上传区域基础样式 */
+.upload-area {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 上传区域拖拽状态 */
+.upload-area.drag-over {
+  border-color: #3b82f6 !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(219, 234, 254, 0.8),
+    rgba(207, 250, 254, 0.8)
+  ) !important;
+  transform: scale(0.98);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1),
+    inset 0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+/* 闪烁动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.upload-area.drag-over::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.75rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.upload-area > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Canvas 像素化渲染 */
+canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+canvas[style*="pixelated"] {
+  image-rendering: pixelated;
+}

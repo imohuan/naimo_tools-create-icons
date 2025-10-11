@@ -1,0 +1,35 @@
+{
+  "name": "create-icons",
+  "version": "1.0.0",
+  "description": "图标制作工具 - 智能裁剪图片并生成多种尺寸的图标",
+  "type": "module",
+  "scripts": {
+    "init": "pnpm i && pnpm run add-electron-types && pnpm run dev",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "add-electron-types": "$env:ELECTRON_SKIP_DOWNLOAD=1; pnpm install electron --save-dev",
+    "deploy": "node scripts/deploy-to-build.js"
+  },
+  "keywords": [
+    "naimo",
+    "plugin",
+    "electron",
+    "icon",
+    "image",
+    "图标制作"
+  ],
+  "author": "Naimo Tools Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22.0.0",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
+  },
+  "dependencies": {
+    "cropperjs": "^1.6.1"
+  }
+}
