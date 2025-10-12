@@ -24,6 +24,8 @@ const availableSizes = [16, 24, 32, 48, 64, 96, 128, 256, 512, 1024];
 let selectedSizes = [16, 32, 64, 128, 256];
 let resizeObserver: ResizeObserver | null = null;
 let isDraggingImage = false;
+let currentViewMode: 0 | 1 = 0; // 0: 自由模式, 1: 限制模式
+let savedCropperState: { canvasData: any; cropBoxData: any; } | null = null; // 保存的裁剪器状态
 
 // ==================== 热重载 ====================
 if (import.meta.hot) {
@@ -82,17 +84,28 @@ function initCropper(imageUrl: string) {
   // 创建新的裁剪器
   cropper = new Cropper(cropperImage, {
     aspectRatio: 1,
-    viewMode: 2,  // 限制画布填充容器，至少一个维度填满
+    viewMode: currentViewMode,  // 使用当前的 viewMode
     dragMode: 'move',
-    autoCropArea: 1,  // 裁剪区域占满容器（100%）
-    responsive: true,
+    autoCropArea: 0,  // 不自动设置裁剪区域，在 ready 中手动设置
+    responsive: false,  // 关闭响应式，手动控制
     center: true,
     highlight: false,
     cropBoxMovable: false,
     cropBoxResizable: false,
     toggleDragModeOnDblclick: false,
     ready() {
+      // 如果有保存的状态（切换模式时），恢复它
+      if (savedCropperState && cropper) {
+        cropper.setCanvasData(savedCropperState.canvasData);
+        cropper.setCropBoxData(savedCropperState.cropBoxData);
+        savedCropperState = null; // 清除保存的状态
+      } else {
+        // 应用裁剪框布局（居中，容器较小边的 76%）
+        applyCropBoxLayout();
+      }
       resizePreviewCanvas();
+      // 更新裁剪模式按钮图标
+      updateViewModeIcon();
     },
     cropstart: () => {
       isDraggingImage = true;
@@ -103,9 +116,141 @@ function initCropper(imageUrl: string) {
     },
     zoom: debounceUpdatePreview
   });
+}
 
-  // 监听容器尺寸变化
-  setupResizeObserver();
+/**
+ * 切换裁剪模式
+ */
+function toggleViewMode() {
+  if (!cropper) return;
+
+  // 保存当前的裁剪框和画布状态
+  savedCropperState = {
+    canvasData: cropper.getCanvasData(),
+    cropBoxData: cropper.getCropBoxData()
+  };
+
+  // 切换模式
+  currentViewMode = currentViewMode === 0 ? 1 : 0;
+
+  // 重新初始化 cropper
+  const cropperImage = document.getElementById('cropperImage') as HTMLImageElement;
+  const imageUrl = cropperImage?.src;
+  if (imageUrl) {
+    initCropper(imageUrl);
+  }
+
+  // 更新按钮图标
+  updateViewModeIcon();
+}
+
+/**
+ * 更新裁剪模式按钮图标
+ */
+function updateViewModeIcon() {
+  const freeMode = document.getElementById('freeMode');
+  const restrictMode = document.getElementById('restrictMode');
+
+  if (freeMode && restrictMode) {
+    if (currentViewMode === 0) {
+      freeMode.classList.remove('hidden');
+      restrictMode.classList.add('hidden');
+    } else {
+      freeMode.classList.add('hidden');
+      restrictMode.classList.remove('hidden');
+    }
+  }
+}
+
+/**
+ * 计算并应用裁剪框的初始位置和大小
+ * 在 Cropper ready 时调用，此时可以正确设置裁剪框
+ */
+function applyCropBoxLayout() {
+  if (!cropper) return;
+
+  const cropperImage = document.getElementById('cropperImage') as HTMLImageElement;
+  const container = cropperImage?.parentElement;
+  if (!container) return;
+
+  // 获取容器尺寸
+  const containerHeight = container.clientHeight;
+  const containerWidth = container.clientWidth;
+
+  console.log('applyCropBoxLayout: 容器尺寸', containerWidth, containerHeight);
+
+  // 裁剪框大小为容器较小边的 76%
+  const containerMinSize = Math.min(containerWidth, containerHeight);
+  const cropBoxSize = containerMinSize * 0.76;
+
+  // 计算裁剪框居中位置
+  const cropBoxLeft = (containerWidth - cropBoxSize) / 2;
+  const cropBoxTop = (containerHeight - cropBoxSize) / 2;
+
+  console.log('applyCropBoxLayout: 裁剪框', {
+    left: cropBoxLeft,
+    top: cropBoxTop,
+    size: cropBoxSize
+  });
+
+  // 获取图片尺寸
+  const imageData = cropper.getImageData();
+  const imgWidth = imageData.naturalWidth;
+  const imgHeight = imageData.naturalHeight;
+  const imgAspectRatio = imgWidth / imgHeight;
+
+  // 计算画布大小（让图片完整显示）
+  let canvasWidth, canvasHeight;
+  if (imgAspectRatio > 1) {
+    canvasHeight = cropBoxSize;
+    canvasWidth = cropBoxSize * imgAspectRatio;
+  } else {
+    canvasWidth = cropBoxSize;
+    canvasHeight = cropBoxSize / imgAspectRatio;
+  }
+
+  // 计算画布居中位置
+  const canvasLeft = (containerWidth - canvasWidth) / 2;
+  const canvasTop = (containerHeight - canvasHeight) / 2;
+
+  // 启用裁剪框（因为初始化时设置了 autoCropArea: 0）
+  cropper.crop();
+
+  // 设置画布
+  cropper.setCanvasData({
+    left: canvasLeft,
+    top: canvasTop,
+    width: canvasWidth,
+    height: canvasHeight
+  });
+
+  // 设置裁剪框（正方形，居中）
+  cropper.setCropBoxData({
+    left: cropBoxLeft,
+    top: cropBoxTop,
+    width: cropBoxSize,
+    height: cropBoxSize
+  });
+
+  console.log('applyCropBoxLayout: 最终裁剪框数据', cropper.getCropBoxData());
+}
+
+/**
+ * Resize 时重新初始化 Cropper
+ */
+function setCropperCanvasSize() {
+  if (!cropper) return;
+
+  const cropperImage = document.getElementById('cropperImage') as HTMLImageElement;
+  if (!cropperImage || !cropperImage.src) return;
+
+  console.log('setCropperCanvasSize: 开始重新初始化 Cropper');
+
+  // 保存当前图片 URL
+  const currentImageUrl = cropperImage.src;
+
+  // 完全重新初始化 Cropper
+  initCropper(currentImageUrl);
 }
 
 /**
@@ -121,20 +266,35 @@ function setupResizeObserver() {
   const previewCanvas = document.getElementById('previewCanvas');
   const previewContainer = previewCanvas?.parentElement;
 
+  let lastCropperSize = { width: cropperContainer?.clientWidth || 0, height: cropperContainer?.clientHeight || 0 };
+  let lastPreviewSize = { width: previewContainer?.clientWidth || 0, height: previewContainer?.clientHeight || 0 };
+
   resizeObserver = new ResizeObserver(debounce((entries) => {
     for (const entry of entries) {
       if (entry.target === cropperContainer) {
-        // 裁剪区域尺寸变化
-        if (cropper) {
-          cropper.reset();
-          updatePreview();
+        // 同时检查容器宽度和高度的变化
+        const currentWidth = cropperContainer?.clientWidth || 0;
+        const currentHeight = cropperContainer?.clientHeight || 0;
+        if (cropper && (Math.abs(currentWidth - lastCropperSize.width) > 2 || Math.abs(currentHeight - lastCropperSize.height) > 2)) {
+          lastCropperSize = { width: currentWidth, height: currentHeight };
+          console.log('ResizeObserver: 容器尺寸变化', currentWidth, currentHeight);
+          // 使用 requestAnimationFrame 确保在下一帧执行，让 DOM 完全更新
+          requestAnimationFrame(() => {
+            setCropperCanvasSize();
+            updatePreview();
+          });
         }
       } else if (entry.target === previewContainer) {
-        // 预览容器尺寸变化
-        resizePreviewCanvas();
+        // 只有当容器尺寸真正变化时才调整
+        const currentWidth = previewContainer?.clientWidth || 0;
+        const currentHeight = previewContainer?.clientHeight || 0;
+        if (Math.abs(currentWidth - lastPreviewSize.width) > 2 || Math.abs(currentHeight - lastPreviewSize.height) > 2) {
+          lastPreviewSize = { width: currentWidth, height: currentHeight };
+          resizePreviewCanvas();
+        }
       }
     }
-  }, 300));
+  }, 100));
 
   if (cropperContainer) {
     resizeObserver.observe(cropperContainer);
@@ -202,12 +362,15 @@ function resizePreviewCanvas() {
   // 取较小值作为canvas的边长，保持1:1
   const size = Math.min(containerWidth, containerHeight);
 
-  // 设置canvas尺寸
-  previewCanvas.width = size;
-  previewCanvas.height = size;
+  // 只有当尺寸真正变化时才修改（避免循环触发）
+  if (Math.abs(previewCanvas.width - size) > 2) {
+    // 设置canvas尺寸
+    previewCanvas.width = size;
+    previewCanvas.height = size;
 
-  // 更新预览内容
-  updatePreview();
+    // 更新预览内容
+    updatePreview();
+  }
 }
 
 /**
@@ -504,6 +667,29 @@ async function handlePaste(event: ClipboardEvent) {
 }
 
 /**
+ * 更新滚动提示显示状态
+ */
+function updateScrollIndicator() {
+  const scrollContainer = document.getElementById('sizeScrollContainer');
+  const scrollIndicator = document.getElementById('scrollIndicator');
+
+  if (!scrollContainer || !scrollIndicator) return;
+
+  // 检查是否滚动到底部（允许1px误差）
+  const isAtBottom = scrollContainer.scrollHeight - scrollContainer.scrollTop <= scrollContainer.clientHeight + 1;
+
+  // 检查是否有滚动内容
+  const hasScroll = scrollContainer.scrollHeight > scrollContainer.clientHeight;
+
+  // 只有当有滚动内容且未滚动到底部时才显示提示
+  if (hasScroll && !isAtBottom) {
+    scrollIndicator.style.display = 'flex';
+  } else {
+    scrollIndicator.style.display = 'none';
+  }
+}
+
+/**
  * 应用初始化
  */
 async function initApp(): Promise<void> {
@@ -537,6 +723,12 @@ async function initApp(): Promise<void> {
   const reuploadBtn = document.getElementById('reuploadBtn');
   if (reuploadBtn) {
     reuploadBtn.addEventListener('click', triggerFileInput);
+  }
+
+  // 切换裁剪模式按钮
+  const toggleViewModeBtn = document.getElementById('toggleViewModeBtn');
+  if (toggleViewModeBtn) {
+    toggleViewModeBtn.addEventListener('click', toggleViewMode);
   }
 
   // 裁剪区域粘贴事件
@@ -593,16 +785,32 @@ async function initApp(): Promise<void> {
   // 初始化尺寸选择 UI
   updateSizeSelection();
 
+  // 设置 ResizeObserver (只创建一次)
+  setupResizeObserver();
+
+  // 滚动容器滚动事件监听
+  const sizeScrollContainer = document.getElementById('sizeScrollContainer');
+  if (sizeScrollContainer) {
+    sizeScrollContainer.addEventListener('scroll', updateScrollIndicator);
+  }
+
   // 监听窗口大小变化
   window.addEventListener('resize', debounce(() => {
     if (cropper) {
-      cropper.reset();
+      setCropperCanvasSize();
+      updatePreview();
     }
     resizePreviewCanvas();
-  }, 300));
+    updateScrollIndicator(); // 窗口大小变化时更新滚动提示
+  }, 100));
 
   // 全局粘贴事件监听
   window.addEventListener('paste', handlePaste);
+
+  // 初始化滚动提示状态
+  setTimeout(() => {
+    updateScrollIndicator();
+  }, 100);
 
   // 注册退出钩子
   if (window.naimo && window.naimo.onExit) {

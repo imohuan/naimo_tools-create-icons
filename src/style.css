@@ -130,3 +130,16 @@ canvas {
 canvas[style*="pixelated"] {
   image-rendering: pixelated;
 }
+
+/* 隐藏滚动条但保持滚动功能 */
+.scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE 和 Edge */
+  -ms-overflow-style: none;
+}
+
+/* Webkit 浏览器（Chrome, Safari, Edge） */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
