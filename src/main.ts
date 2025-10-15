@@ -26,6 +26,7 @@ let resizeObserver: ResizeObserver | null = null;
 let isDraggingImage = false;
 let currentViewMode: 0 | 1 = 0; // 0: 自由模式, 1: 限制模式
 let savedCropperState: { canvasData: any; cropBoxData: any; } | null = null; // 保存的裁剪器状态
+let isCtrlPressed = false; // 追踪 Ctrl 键状态
 
 // ==================== 热重载 ====================
 if (import.meta.hot) {
@@ -93,6 +94,7 @@ function initCropper(imageUrl: string) {
     cropBoxMovable: false,
     cropBoxResizable: false,
     toggleDragModeOnDblclick: false,
+    wheelZoomRatio: 0.1, // 默认滚轮缩放比例
     ready() {
       // 如果有保存的状态（切换模式时），恢复它
       if (savedCropperState && cropper) {
@@ -106,6 +108,9 @@ function initCropper(imageUrl: string) {
       resizePreviewCanvas();
       // 更新裁剪模式按钮图标
       updateViewModeIcon();
+
+      // 设置精细控制的滚轮事件
+      setupFineControlListeners();
     },
     cropstart: () => {
       isDraggingImage = true;
@@ -116,6 +121,121 @@ function initCropper(imageUrl: string) {
     },
     zoom: debounceUpdatePreview
   });
+}
+
+/**
+ * 设置精细控制监听器
+ */
+function setupFineControlListeners() {
+  const cropperArea = document.getElementById('cropperArea');
+  if (!cropperArea) return;
+
+  // 移除旧的监听器（如果存在）
+  const oldWheelHandler = (cropperArea as any).__wheelHandler;
+  if (oldWheelHandler) {
+    cropperArea.removeEventListener('wheel', oldWheelHandler);
+  }
+
+  // 滚轮事件处理（精细缩放控制）
+  const wheelHandler = (e: WheelEvent) => {
+    if (!cropper) return;
+
+    // 如果按下了 Ctrl 键，使用精细控制（减缓缩放）
+    if (isCtrlPressed || e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 获取当前缩放比例
+      const imageData = cropper.getImageData();
+      const currentRatio = imageData.width / imageData.naturalWidth;
+
+      // 精细控制：缩放步长为正常的 0.2 倍（正常 0.1，精细 0.02）
+      const normalZoomStep = 0.1;
+      const fineZoomStep = normalZoomStep * 0.02;
+      const zoomDelta = e.deltaY > 0 ? -fineZoomStep : fineZoomStep;
+      const newRatio = currentRatio + zoomDelta;
+
+      // 应用新的缩放比例
+      cropper.zoomTo(newRatio);
+
+      // 更新预览（debounced）
+      if (!isDraggingImage) {
+        debounceUpdatePreview();
+      }
+    }
+    // 正常情况下让 Cropper.js 自己处理缩放
+  };
+
+  // 保存处理器引用以便后续移除
+  (cropperArea as any).__wheelHandler = wheelHandler;
+
+  // 添加事件监听，捕获阶段优先处理
+  cropperArea.addEventListener('wheel', wheelHandler, { passive: false, capture: true });
+
+  // 拖拽精细控制
+  let isDragging = false;
+  let dragStartPos: { x: number; y: number } | null = null;
+  let dragStartCanvasData: any = null;
+
+  const mouseDownHandler = (e: MouseEvent) => {
+    if (!cropper || e.button !== 0) return; // 只处理左键
+
+    isDragging = true;
+    dragStartPos = { x: e.clientX, y: e.clientY };
+    dragStartCanvasData = cropper.getCanvasData();
+  };
+
+  const mouseMoveHandler = (e: MouseEvent) => {
+    if (!cropper || !isDragging || !dragStartPos || !dragStartCanvasData) return;
+    if (!isCtrlPressed) return; // 只在 Ctrl 按下时处理
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 计算移动距离
+    const deltaX = e.clientX - dragStartPos.x;
+    const deltaY = e.clientY - dragStartPos.y;
+
+    // 精细控制：移动距离缩小到原来的 0.2 倍
+    const fineControlFactor = 0.2;
+
+    // 应用新的位置
+    cropper.setCanvasData({
+      ...dragStartCanvasData,
+      left: dragStartCanvasData.left + deltaX * fineControlFactor,
+      top: dragStartCanvasData.top + deltaY * fineControlFactor
+    });
+  };
+
+  const mouseUpHandler = () => {
+    isDragging = false;
+    dragStartPos = null;
+    dragStartCanvasData = null;
+
+    // 更新预览
+    if (cropper) {
+      updatePreview();
+    }
+  };
+
+  // 移除旧的监听器
+  const oldMouseDownHandler = (cropperArea as any).__mouseDownHandler;
+  const oldMouseMoveHandler = (cropperArea as any).__mouseMoveHandler;
+  const oldMouseUpHandler = (cropperArea as any).__mouseUpHandler;
+
+  if (oldMouseDownHandler) cropperArea.removeEventListener('mousedown', oldMouseDownHandler);
+  if (oldMouseMoveHandler) document.removeEventListener('mousemove', oldMouseMoveHandler);
+  if (oldMouseUpHandler) document.removeEventListener('mouseup', oldMouseUpHandler);
+
+  // 保存处理器引用
+  (cropperArea as any).__mouseDownHandler = mouseDownHandler;
+  (cropperArea as any).__mouseMoveHandler = mouseMoveHandler;
+  (cropperArea as any).__mouseUpHandler = mouseUpHandler;
+
+  // 添加事件监听，捕获阶段优先处理
+  cropperArea.addEventListener('mousedown', mouseDownHandler, { capture: true });
+  document.addEventListener('mousemove', mouseMoveHandler, { capture: true });
+  document.addEventListener('mouseup', mouseUpHandler, { capture: true });
 }
 
 /**
@@ -806,6 +926,24 @@ async function initApp(): Promise<void> {
 
   // 全局粘贴事件监听
   window.addEventListener('paste', handlePaste);
+
+  // 监听 Ctrl 键状态，用于精细控制
+  window.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Control' || e.key === 'Meta') { // Meta 键用于 Mac
+      isCtrlPressed = true;
+    }
+  });
+
+  window.addEventListener('keyup', (e: KeyboardEvent) => {
+    if (e.key === 'Control' || e.key === 'Meta') {
+      isCtrlPressed = false;
+    }
+  });
+
+  // 当窗口失去焦点时重置 Ctrl 状态
+  window.addEventListener('blur', () => {
+    isCtrlPressed = false;
+  });
 
   // 初始化滚动提示状态
   setTimeout(() => {
