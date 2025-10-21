@@ -1,0 +1,28 @@
+{
+  "$schema": "./schema.json",
+  "id": "create-icons",
+  "name": "图标制作工具",
+  "version": "1.0.3",
+  "author": "Naimo Tools Team",
+  "icon": "./ico.png",
+  "description": "智能裁剪图片并生成多种尺寸的图标",
+  "category": "image_video",
+  "enabled": true,
+  "main": "./index.html",
+  "preload": "./preload.js",
+  "feature": [
+    {
+      "path": "create-icon",
+      "name": "制作图标",
+      "icon": "./ico.png",
+      "description": "上传图片，智能裁剪并生成多种尺寸的图标"
+    },
+    {
+      "path": "create-icon-from-image",
+      "name": "当前图片制作图标",
+      "icon": "./ico.png",
+      "description": "从图片搜索结果制作图标",
+      "type": "img"
+    }
+  ]
+}

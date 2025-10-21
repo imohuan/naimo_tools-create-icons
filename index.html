@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>图标制作工具</title>
+  <script type="module" crossorigin src="./js/main.CEZZAgt5.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main.SpLsBdpd.css">
+</head>
+
+<body class="w-full h-screen select-none overflow-hidden">
+  <div id="app" class="w-full h-full">
+    <!-- 隐藏的文件输入框 -->
+    <input id="fileInput" type="file" accept="image/*" class="hidden">
+
+    <!-- 上传页面 -->
+    <div id="uploadPage"
+      class="h-full bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-2 sm:p-3 md:p-4 overflow-hidden">
+      <div class="w-full h-full flex items-center justify-center" style="max-width: 90%; max-height: 500px;">
+        <div class="w-full h-full max-w-2xl flex flex-col" style="max-height: 95%;">
+          <!-- 上传卡片 -->
+          <div
+            class="h-full rounded-xl sm:rounded-2xl shadow-2xl p-3 sm:p-4 md:p-6 border border-gray-100 backdrop-blur-sm bg-white/95 flex flex-col">
+            <div id="uploadBtn" tabindex="0"
+              class="upload-area flex-1 border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl py-3 sm:py-4 md:py-6 px-3 sm:px-4 md:px-6 cursor-pointer hover:border-blue-500 hover:bg-gradient-to-br hover:from-blue-50 hover:to-cyan-50 transition-all duration-300 flex items-center justify-center group outline-none">
+              <div class="text-center w-full flex flex-col justify-center">
+                <!-- 上传图标 -->
+                <div class="mb-2">
+                  <div class="inline-block transform  transition-all duration-300">
+                    <div
+                      class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl p-2.5 sm:p-3 md:p-4 shadow-lg group-hover:shadow-2xl group-hover:shadow-blue-300/50 transition-all duration-300">
+                      <svg class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                        </path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 文字说明 -->
+                <div class="mb-3 sm:mb-4 md:mb-6">
+                  <h3
+                    class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mb-1 sm:mb-1.5 group-hover:text-blue-600 transition-colors duration-300">
+                    选择或拖拽图片</h3>
+                  <p class="text-gray-500 text-xs sm:text-sm">支持 PNG、JPG、WEBP 等常见图片格式</p>
+                </div>
+
+                <!-- 特性列表 -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-3 md:gap-5 max-w-md mx-auto">
+                  <div
+                    class="flex flex-col items-center gap-1 sm:gap-1.5 transform hover:scale-105 transition-transform duration-200">
+                    <div
+                      class="bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 shadow-sm hover:shadow-md transition-shadow">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z">
+                        </path>
+                      </svg>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700">智能裁剪</span>
+                  </div>
+                  <div
+                    class="flex flex-col items-center gap-1 sm:gap-1.5 transform hover:scale-105 transition-transform duration-200">
+                    <div
+                      class="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 shadow-sm hover:shadow-md transition-shadow">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                      </svg>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700">圆角调节</span>
+                  </div>
+                  <div
+                    class="flex flex-col items-center gap-1 sm:gap-1.5 transform hover:scale-105 transition-transform duration-200">
+                    <div
+                      class="bg-gradient-to-br from-cyan-100 to-teal-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 shadow-sm hover:shadow-md transition-shadow">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-cyan-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                        </path>
+                      </svg>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700">批量导出</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部提示 - 放在卡片内 -->
+            <div
+              class="text-center mt-2 sm:mt-3 flex items-center justify-center gap-2 text-gray-600 bg-blue-50/50 rounded-lg px-3 py-1.5 flex-shrink-0">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" fill="currentColor"
+                viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <p class="text-xs font-medium leading-tight">提示：点击上传、拖拽或粘贴（Ctrl+V）图片</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 工作页面 -->
+    <div id="workPage" class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 hidden overflow-hidden">
+      <div class="flex gap-2 h-full p-2 overflow-hidden">
+        <!-- 左侧：裁剪区域 - 占满全屏高度 -->
+        <div id="cropperArea" tabindex="0"
+          class="flex-1 bg-white rounded-lg shadow-xl overflow-hidden relative h-full outline-none">
+          <!-- 裁剪画布 - 100%高度 -->
+          <div class="w-full h-full">
+            <img id="cropperImage" class="block w-full h-full">
+          </div>
+          <!-- 标题浮动在内部 -->
+          <div class="hidden absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-md">
+            <h2 class="text-sm font-bold text-gray-800">裁剪调整</h2>
+          </div>
+          <!-- 裁剪模式切换按钮 - 右上角 -->
+          <button id="toggleViewModeBtn" title="切换裁剪模式"
+            class="absolute top-2 right-2 w-7 h-7 bg-white/90 backdrop-blur-sm hover:bg-blue-50 rounded shadow-md flex items-center justify-center transition-all duration-200 group border-2 border-transparent ">
+            <svg class="w-4 h-4 text-gray-700 group-hover:text-blue-600 transition-colors" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <!-- 自由模式图标（默认） -->
+              <g id="freeMode">
+                <rect x="4" y="4" width="16" height="16" stroke-width="2" stroke-dasharray="4 4" rx="2"></rect>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h8m-4-4v8"></path>
+              </g>
+              <!-- 限制模式图标 -->
+              <g id="restrictMode" class="hidden">
+                <rect x="4" y="4" width="16" height="16" stroke-width="2" rx="2"></rect>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6m0-6l-6 6"></path>
+              </g>
+            </svg>
+          </button>
+          <!-- 提示浮动在底部 -->
+          <div id="cropperHint"
+            class="absolute bottom-3 left-3 right-3 bg-blue-50/90 backdrop-blur-sm border border-blue-200 rounded-lg px-3 py-1.5">
+            <p class="text-xs text-blue-800 text-center">💡 拖拽移动或滚轮缩放 · 按住 Ctrl 键进行精细调整 · Ctrl+V 粘贴图片</p>
+          </div>
+        </div>
+
+        <!-- 右侧：控制区域 - flex布局 -->
+        <div class="w-96 bg-white rounded-lg shadow-xl p-3 flex flex-col overflow-hidden">
+          <!-- 顶部固定区域 -->
+          <div class="flex-shrink-0">
+            <!-- 标题和按钮 -->
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-bold text-gray-800">生成图标</h2>
+              <button id="reuploadBtn"
+                class="px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-xs font-medium shadow-md flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                </svg>
+                <span>重新上传</span>
+              </button>
+            </div>
+
+            <!-- 圆角控制 -->
+            <div class="bg-gray-50 rounded-lg p-3 mb-3">
+              <div class="flex items-center gap-3">
+                <label class="text-xs font-medium text-gray-700 whitespace-nowrap">圆角半径</label>
+                <input id="radiusSlider" type="range" min="0" max="100" value="0"
+                  class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <span class="text-sm font-bold text-blue-600 w-12 text-right"><span id="radiusValue">0%</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 中间flex-1区域：实时预览和尺寸选择并排 -->
+          <div class="flex-1 flex gap-3 min-h-0 mb-2 overflow-hidden">
+            <!-- 左侧：实时预览 -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-3 flex flex-col min-w-0 overflow-hidden">
+              <p class="text-xs font-semibold text-gray-700 mb-2 flex-shrink-0">实时预览</p>
+              <div class="flex items-center justify-center min-h-0 ">
+                <canvas id="previewCanvas" class="border-2 border-gray-300 rounded-md shadow-sm"></canvas>
+              </div>
+            </div>
+
+            <!-- 右侧：尺寸选择 -->
+            <div class="flex-1 bg-gray-50 rounded-lg p-3 flex flex-col min-w-0 overflow-hidden relative">
+              <div class="flex items-center justify-between mb-2 flex-shrink-0">
+                <h3 class="text-xs font-semibold text-gray-700">选择尺寸</h3>
+                <button id="toggleAllBtn" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                  全选
+                </button>
+              </div>
+              <!-- 滚动容器，隐藏滚动条 -->
+              <div id="sizeScrollContainer" class="flex-1 overflow-y-auto min-h-0 scrollbar-hide pr-1">
+                <div class="grid grid-cols-2 gap-1.5">
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-blue-500 bg-blue-50">
+                    <input id="size-16" type="checkbox" checked
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">16</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-gray-300">
+                    <input id="size-24" type="checkbox"
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">24</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-blue-500 bg-blue-50">
+                    <input id="size-32" type="checkbox" checked
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">32</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-gray-300">
+                    <input id="size-48" type="checkbox"
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">48</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-blue-500 bg-blue-50">
+                    <input id="size-64" type="checkbox" checked
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">64</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-gray-300">
+                    <input id="size-96" type="checkbox"
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">96</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-blue-500 bg-blue-50">
+                    <input id="size-128" type="checkbox" checked
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">128</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-blue-500 bg-blue-50">
+                    <input id="size-256" type="checkbox" checked
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">256</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-gray-300">
+                    <input id="size-512" type="checkbox"
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">512</span>
+                  </label>
+                  <label
+                    class="flex items-center space-x-1 p-1.5 border-2 rounded cursor-pointer hover:bg-blue-50 transition-colors border-gray-300">
+                    <input id="size-1024" type="checkbox"
+                      class="w-3 h-3 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0">
+                    <span class="text-xs font-medium text-gray-700">1024</span>
+                  </label>
+                </div>
+              </div>
+              <!-- 滚动提示 - 渐变遮罩 -->
+              <div id="scrollIndicator"
+                class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-50 via-gray-50/80 to-transparent pointer-events-none flex items-end justify-center pb-1">
+                <svg class="w-3 h-3 text-gray-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 隐藏的canvas用于生成图标 -->
+          <div class="hidden">
+            <canvas id="icon-16" width="16" height="16"></canvas>
+            <canvas id="icon-24" width="24" height="24"></canvas>
+            <canvas id="icon-32" width="32" height="32"></canvas>
+            <canvas id="icon-48" width="48" height="48"></canvas>
+            <canvas id="icon-64" width="64" height="64"></canvas>
+            <canvas id="icon-96" width="96" height="96"></canvas>
+            <canvas id="icon-128" width="128" height="128"></canvas>
+            <canvas id="icon-256" width="256" height="256"></canvas>
+            <canvas id="icon-512" width="512" height="512"></canvas>
+            <canvas id="icon-1024" width="1024" height="1024"></canvas>
+          </div>
+
+          <!-- 底部按钮 - 固定在底部 -->
+          <div class="flex-shrink-0 flex gap-2">
+            <!-- 复制图片按钮 -->
+            <button id="copyImageBtn"
+              class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span class="text-xs">复制</span>
+            </button>
+            <!-- 下载全部按钮 -->
+            <button id="downloadAllBtn"
+              class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              <span class="text-xs">下载</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- TypeScript 入口文件 -->
+</body>
+
+</html>
